@@ -12,14 +12,14 @@
         :collapse-transition="false"
         mode="vertical"
       >
-        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />
+        <sidebar-item v-for="route in newRoutes" :key="route.path" :item="route" :base-path="route.path" />
       </el-menu>
     </el-scrollbar>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import Logo from './Logo'
 import SidebarItem from './SidebarItem'
 import variables from '@/styles/variables.scss'
@@ -30,9 +30,9 @@ export default {
     ...mapGetters([
       'sidebar'
     ]),
-    routes() {
-      return this.$router.options.routes
-    },
+    // 原本模板中的 this.$router.options.routes 里面只有一开始设置的常量路由，而没有后面addRoutes()新增的路由
+    // 根据仓库中根据权限计算可见的路由渲染到页面上
+    ...mapState('user', ['newRoutes']),
     activeMenu() {
       const route = this.$route
       const { meta, path } = route

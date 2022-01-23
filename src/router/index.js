@@ -1,10 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
-Vue.use(Router)
-
+// import { constantRoutes, asyncRoutes, anyRoutes } from './routeRules.js'
 /* Layout */
 import Layout from '@/layout'
+
+Vue.use(Router)
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -30,6 +30,7 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
+// 常量路由：任何人登录都可以看到
 export const constantRoutes = [
   {
     path: '/login',
@@ -42,7 +43,7 @@ export const constantRoutes = [
     component: () => import('@/views/404'),
     hidden: true
   },
-
+  // 首页
   {
     path: '/',
     component: Layout,
@@ -51,119 +52,88 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '首页', icon: 'dashboard' }
     }]
-  },
+  }
+]
 
+// 异步路由：需要根据登录用户的权限，判断哪些路由是需要显示的
+export const asyncRoutes = [
+  // 权限管理
   {
-    path: '/example',
+    path: '/acl',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'el-icon-s-help' },
+    redirect: '/acl/user/list',
+    name: 'Acl',
+    meta: { title: '权限管理', icon: 'el-icon-s-tools' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        path: 'user/list',
+        name: 'User',
+        component: () => import('@/views/acl/user/list.vue'),
+        meta: { title: '用户管理' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
-  },
-
-  {
-    path: '/form',
-    component: Layout,
-    children: [
+        path: 'role/list',
+        name: 'Role',
+        component: () => import('@/views/acl/role/list.vue'),
+        meta: { title: '角色管理' }
+      },
       {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        path: 'role/auth/:id',
+        name: 'RoleAuth',
+        component: () => import('@/views/acl/role/roleAuth.vue'),
+        meta: { title: '角色授权' },
+        hidden: true // 路由规则中添加 hidden 可以使该路由不被渲染，但可以通过路由地址进行跳转
+      },
+      {
+        path: 'permission/list',
+        name: 'Permission',
+        component: () => import('@/views/acl/permission/list.vue'),
+        meta: { title: '菜单管理' }
       }
     ]
   },
-
+  // 商品管理
   {
-    path: '/nested',
+    path: '/product',
+    name: 'Product',
+    redirect: '/product/trademark',
     component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
+    meta: { title: '商品管理', icon: 'el-icon-goods' },
+    children: [{
+      path: 'trademark',
+      name: 'TradeMark',
+      component: () => import('@/views/product/tradeMark'),
+      meta: { title: '品牌管理' }
     },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        name: 'Menu2',
-        meta: { title: 'menu2' }
-      }
+    {
+      path: 'attr',
+      name: 'Attr',
+      component: () => import('@/views/product/attr'),
+      meta: { title: '平台属性管理' }
+    },
+    {
+      path: 'spu',
+      name: 'Spu',
+      component: () => import('@/views/product/spu'),
+      meta: { title: 'Spu管理' }
+    },
+    {
+      path: 'sku',
+      name: 'Sku',
+      component: () => import('@/views/product/sku'),
+      meta: { title: 'Sku管理' }
+    }
     ]
-  },
+  }]
 
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
-      }
-    ]
-  },
-
+// 任意路由：搜索不存在的路由时显示，必须放在 最后
+export const anyRoutes = [
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
-
+// const routes = [...constantRoutes, ...asyncRoutes, ...anyRoutes]
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),

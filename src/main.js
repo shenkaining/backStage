@@ -11,6 +11,8 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
+import API from '@/api'
+import Category from '@/components/Category'
 
 import '@/icons' // icon
 import '@/permission' // permission control
@@ -34,6 +36,10 @@ Vue.use(ElementUI, { locale })
 // Vue.use(ElementUI)
 
 Vue.config.productionTip = false
+// 同一绑定api
+Vue.prototype.$API = API
+// 注册全局组件
+Vue.component(Category.name, Category)
 
 new Vue({
   el: '#app',
